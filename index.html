@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>✨ Vibe Nonogram ✨</title>
+    <title>✨ Nonogram game ✨</title>
     <style>
         body {
             font-family: system-ui, sans-serif;
@@ -79,7 +79,7 @@
 </head>
 
 <body>
-    <h1>🧩 Vibe Nonogram</h1>
+    <h1>🧩 Nonogram game</h1>
     <p>Click = fill 💖 | Right-click = X ✖</p>
 
     <div>
@@ -91,7 +91,7 @@
     </div>
 
     <div id="board" class="board"></div>
-    <button onclick="checkWin()">Check my vibe</button>
+    <button onclick="checkWin()">Check my solution</button>
 
     <script>
         // ---- Games ----
@@ -274,12 +274,12 @@
             for (let r = 0; r < solution.length; r++) {
                 for (let c = 0; c < solution[0].length; c++) {
                     if (solution[r][c] !== state[r][c]) {
-                        alert('❌ Not quite… recalibrate your vibes');
+                        alert('❌ Not quite… recalibrate your answers');
                         return;
                     }
                 }
             }
-            alert('✨ Perfect vibes! You solved it 💖');
+            alert('✨ Perfect! You solved it 💖');
         }
 
         // ---- Init ----
