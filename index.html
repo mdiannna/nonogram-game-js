@@ -63,7 +63,7 @@
 
         .cell.locked {
             pointer-events: none;
-            opacity: 0.6;
+            /*opacity: 0.6;*/
             cursor: not-allowed;
         }
 
@@ -208,31 +208,39 @@
 
             state[r][c] = expected;
 
-            if (actual === 1 && expected === 0) {
-                // wrong filled cell
-                el.classList.remove('filled');
-                el.classList.add('marked');
-                el.textContent = '✖';
+            if (actual == expected) {
+            } else {
 
                 el.classList.add('wrong');
 
+                if (actual === 1 && expected === 0) {
+                    // wrong filled cell
+                    el.classList.remove('filled');
+                    el.classList.add('marked');
+                    el.textContent = '✖';
+
+
+                }
+                else if (actual === 2 && expected === 1) {
+                    // wrong X (cell should have been filled)
+                    el.classList.remove('marked');
+                    el.textContent = '';
+                    el.classList.add('filled');
+                }
+                else if (actual === 2 && expected === 0) {
+                    // correct X
+                    el.classList.add('marked');
+                    el.textContent = '✖';
+                }
             }
-            else if (actual === 2 && expected === 1) {
-                // wrong X (cell should have been filled)
-                el.classList.remove('marked');
-                el.textContent = '';
-                el.classList.add('filled');
-                el.classList.add('wrong');
-            }
-            else if (actual == expected) {
-                lockCell(r, c, el);
-            }
+            lockCell(r, c, el);
+
         }
 
         function clearReds() {
             const wrongCells = document.querySelectorAll('.wrong');
             wrongCells.forEach(el => {
-                el.classList.remove('wrong', 'locked');
+                el.classList.remove('wrong');
             });
         }
 
@@ -240,22 +248,23 @@
         function handleClick(r, c, el) {
             clearReds();
             if (el.classList.contains('locked')) return;
-            if (state[r][c] === 2) return; // X-marked
+            // if (state[r][c] === 2) return; // X-marked
             // state[r][c] = state[r][c] === 1 ? 0 : 1;
             state[r][c] = 1;
-            validateCell(r, c, el);
             el.classList.toggle('filled');
+            validateCell(r, c, el);
+
         }
 
         function handleRightClick(r, c, el) {
             clearReds();
             if (el.classList.contains('locked')) return;
-            if (state[r][c] === 1) return; // filled cannot X
+            // if (state[r][c] === 1) return; // filled cannot X
             // state[r][c] = state[r][c] === 2 ? 0 : 2;
             state[r][c] = 2;
             el.textContent = '✖';
-            validateCell(r, c, el);
             el.classList.toggle('marked');
+            validateCell(r, c, el);
 
 
         }
