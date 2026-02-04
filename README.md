@@ -1,3 +1,3 @@
 # nonogram-game-js
 
-![Vibe Nonogram Screenshot](vibe-nonogram-screenshot.png)
+![Nonogram Game Screenshot](nonogram_game_screenshot.png)
