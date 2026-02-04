@@ -75,12 +75,23 @@
             font-size: 16px;
             cursor: pointer;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
     <h1>🧩 Nonogram game</h1>
     <p>Click = fill 💖 | Right-click = X ✖</p>
+
+    <p>Lives: <span id="lives">
+            <span id="live-1" class="live">💖</span>
+            <span id="live-2" class="live">💖</span>
+            <span id="live-3" class="live">💖</span>
+        </span>
+    </p>
 
     <div>
         <button onclick="loadGame(0)">Game 1</button>
@@ -154,10 +165,25 @@
             }
         ];
 
+        let gameIndex = 0;
+        let lives = 3;
         let solution = [], rowClues = [], colClues = [], state = [];
 
+        function updateLives() {
+            for (let i = 0; i < lives; i++) {
+                const el = document.getElementById(`live-${i + 1}`);
+                el.classList.remove('hidden');
+            }
+            for (let i = lives; i < 3; i++) {
+                const el = document.getElementById(`live-${i + 1}`);
+                el.classList.add('hidden');
+            }
+        }
         // ---- Grid ----
         function loadGame(index) {
+            gameIndex = index;
+            lives = 3;
+            updateLives();
             solution = games[index].solution;
             rowClues = games[index].rowClues;
             colClues = games[index].colClues;
@@ -210,6 +236,7 @@
             if (actual === expected || (actual === 2 && expected === 0)) {
                 // correct
                 lockCell(r, c, el);
+                return;
             } else {
 
                 el.classList.add('wrong');
@@ -233,7 +260,9 @@
             state[r][c] = expected;
 
             lockCell(r, c, el);
-
+            lives--;
+            updateLives();
+            checkLost();
         }
 
         function clearReds() {
@@ -273,6 +302,9 @@
             for (let r = 0; r < solution.length; r++) {
                 for (let c = 0; c < solution[0].length; c++) {
                     if (solution[r][c] !== state[r][c]) {
+                        if (solution[r][c] === 0 && state[r][c] === 2) {
+                            continue;
+                        }
                         alert('❌ Not quite… recalibrate your answers');
                         return;
                     }
@@ -281,8 +313,17 @@
             alert('✨ Perfect! You solved it 💖');
         }
 
+        function checkLost() {
+            if (lives === 0) {
+                alert('❌ You lost! No more lives remaining');
+                loadGame(gameIndex);
+
+            }
+        }
+
+
         // ---- Init ----
-        loadGame(0);
+        loadGame(gameIndex);
     </script>
 </body>
 
