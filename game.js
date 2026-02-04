@@ -2,65 +2,67 @@
 const games = [
     {
         solution: [
-            [0, 1, 1, 1, 0],
+            [2, 1, 1, 1, 2],
             [1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1],
-            [0, 1, 1, 1, 0],
-            [0, 0, 1, 0, 0]
+            [2, 1, 1, 1, 2],
+            [2, 2, 1, 2, 2]
         ],
         rowClues: ["3", "5", "5", "3", "1"],
         colClues: ["2", "4", "5", "4", "2"]
     },
     {
         solution: [
-            [0, 0, 1, 0, 0],
-            [1, 0, 1, 0, 1],
-            [0, 1, 1, 1, 0],
-            [1, 0, 1, 0, 1],
-            [0, 0, 1, 0, 0]
+            [2, 2, 1, 2, 2],
+            [1, 2, 1, 2, 1],
+            [2, 1, 1, 1, 2],
+            [1, 2, 1, 2, 1],
+            [2, 2, 1, 2, 2]
         ],
         rowClues: ["1", "1 1 1", "3", "1 1 1", "1"],
         colClues: ["1 1", "1", "5", "1", "1 1"]
     },
     {
         solution: [
-            [1, 0, 0, 0, 1, 1],
-            [1, 1, 0, 1, 1, 1],
-            [0, 1, 1, 1, 0, 1],
-            [1, 0, 1, 0, 1, 1],
-            [0, 1, 1, 1, 0, 1],
-            [0, 1, 1, 1, 0, 1]
+            [1, 2, 2, 2, 1, 1],
+            [1, 1, 2, 1, 1, 1],
+            [2, 1, 1, 1, 2, 1],
+            [1, 2, 1, 2, 1, 1],
+            [2, 1, 1, 1, 2, 1],
+            [2, 1, 1, 1, 2, 1]
         ],
         rowClues: ["1 1", "2 2", "3", "1 1 1", "3", "3"],
         colClues: ["2 1", "2 2", "1 2", "2 2", "2 1", "2"]
     },
     {
         solution: [
-            [0, 0, 1, 0, 0],
-            [0, 0, 1, 0, 0],
+            [2, 2, 1, 2, 2],
+            [2, 2, 1, 2, 2],
             [1, 1, 1, 1, 1],
-            [0, 0, 1, 0, 0],
-            [0, 0, 1, 0, 0]
+            [2, 2, 1, 2, 2],
+            [2, 2, 1, 2, 2]
         ],
         rowClues: ["1", "1", "5", "1", "1"],
         colClues: ["1", "1", "5", "1", "1"]
     },
     {
         solution: [
-            [0, 1, 1, 0, 0],
-            [1, 1, 1, 0, 0],
-            [1, 1, 1, 0, 0],
-            [1, 1, 1, 0, 0],
-            [0, 1, 1, 0, 0]
+            [2, 1, 1, 2, 2],
+            [1, 1, 1, 2, 2],
+            [1, 1, 1, 2, 2],
+            [1, 1, 1, 2, 2],
+            [2, 1, 1, 2, 2]
         ],
         rowClues: ["2", "3", "3", "3", "2"],
         colClues: ["4", "5", "5", "", ""]
     }
 ];
 
+
 let gameIndex = 0;
 let lives = 3;
-let solution = [], rowClues = [], colClues = [], state = [];
+let state = [];
+
 
 function updateLives() {
     for (let i = 0; i < lives; i++) {
@@ -75,6 +77,8 @@ function updateLives() {
 // ---- Grid ----
 function loadGame(index) {
     gameIndex = index;
+    state = Array.from({ length: games[index].solution.length }, () => Array(games[index].solution[0].length).fill(0));
+
     lives = 3;
     updateLives();
     solution = games[index].solution;
@@ -124,32 +128,25 @@ function validateCell(r, c, el) {
 
     const expected = solution[r][c];
     const actual = state[r][c];
-    console.log(expected, actual);
 
-    if (actual === expected || (actual === 2 && expected === 0)) {
-        // correct
+    if (actual === expected) {
         lockCell(r, c, el);
         return;
+    }
+
+    // wrong
+    el.classList.add('wrong');
+
+    state[r][c] = expected;
+
+    el.classList.remove('filled', 'marked');
+    el.textContent = '';
+
+    if (expected === 1) {
+        el.classList.add('filled');
     } else {
-
-        el.classList.add('wrong');
-
-        if (actual === 1 && expected === 0) {
-            // wrong filled cell
-            el.classList.remove('filled');
-            el.classList.add('marked');
-            el.textContent = '✖';
-            state[r][c] = 2;
-
-        }
-        else if (actual === 2 && expected === 1) {
-            // wrong X (cell should have been filled)
-            el.classList.remove('marked');
-            el.textContent = '';
-            el.classList.add('filled');
-            state[r][c] = expected;
-        }
-
+        el.classList.add('marked');
+        el.textContent = '✖';
     }
 
     lockCell(r, c, el);
