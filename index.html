@@ -206,9 +206,10 @@
             const expected = solution[r][c];
             const actual = state[r][c];
 
-            state[r][c] = expected;
 
-            if (actual == expected) {
+            if (actual === expected || (actual === 2 && expected === 0)) {
+                // correct
+                lockCell(r, c, el);
             } else {
 
                 el.classList.add('wrong');
@@ -227,12 +228,10 @@
                     el.textContent = '';
                     el.classList.add('filled');
                 }
-                else if (actual === 2 && expected === 0) {
-                    // correct X
-                    el.classList.add('marked');
-                    el.textContent = '✖';
-                }
+
             }
+            state[r][c] = expected;
+
             lockCell(r, c, el);
 
         }
