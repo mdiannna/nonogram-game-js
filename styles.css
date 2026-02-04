@@ -1,0 +1,74 @@
+body {
+    font-family: system-ui, sans-serif;
+    background: #0f1220;
+    color: #eaeaf0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+}
+
+.board {
+    display: grid;
+    gap: 4px;
+}
+
+.cell,
+.clue {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.clue {
+    background: #1c2040;
+    color: #9aa0ff;
+    font-size: 14px;
+}
+
+.cell {
+    background: #2a2f6b;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.05s;
+}
+
+.cell:hover {
+    transform: scale(1.05);
+}
+
+.cell.filled {
+    background: #ff6ad5;
+}
+
+.cell.marked {
+    background: #1c2040;
+    color: #555;
+}
+
+.cell.wrong {
+    background: #ff4d4d !important;
+}
+
+.cell.locked {
+    pointer-events: none;
+    /*opacity: 0.6;*/
+    cursor: not-allowed;
+}
+
+button {
+    background: #ff6ad5;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
