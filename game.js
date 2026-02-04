@@ -54,7 +54,7 @@ const games = [
             [0, 1, 1, 0, 0]
         ],
         rowClues: ["2", "3", "3", "3", "2"],
-        colClues: ["4", "5", "5", "0", "0"]
+        colClues: ["4", "5", "5", "", ""]
     }
 ];
 
@@ -102,7 +102,7 @@ function buildGrid() {
                 div.dataset.row = r;
                 div.dataset.col = c;
 
-                div.onclick = () => handleClick(r, c, div);
+                div.onclick = e => handleClick(r, c, div, e);
                 div.oncontextmenu = e => {
                     e.preventDefault();
                     handleRightClick(r, c, div);
@@ -120,11 +120,11 @@ function lockCell(r, c, el) {
 
 // ---- Validation ----
 function validateCell(r, c, el) {
-    el.classList.remove('wrong', 'locked');
+    el.classList.remove('wrong');
 
     const expected = solution[r][c];
     const actual = state[r][c];
-
+    console.log(expected, actual);
 
     if (actual === expected || (actual === 2 && expected === 0)) {
         // correct
@@ -139,7 +139,7 @@ function validateCell(r, c, el) {
             el.classList.remove('filled');
             el.classList.add('marked');
             el.textContent = '✖';
-
+            state[r][c] = 2;
 
         }
         else if (actual === 2 && expected === 1) {
@@ -147,10 +147,10 @@ function validateCell(r, c, el) {
             el.classList.remove('marked');
             el.textContent = '';
             el.classList.add('filled');
+            state[r][c] = expected;
         }
 
     }
-    state[r][c] = expected;
 
     lockCell(r, c, el);
     lives--;
@@ -166,25 +166,26 @@ function clearReds() {
 }
 
 // ---- Click Handlers ----
-function handleClick(r, c, el) {
-    clearReds();
+function handleClick(r, c, el, e) {
+    if (e && e.button !== 0) return; // only left click
     if (el.classList.contains('locked')) return;
+    clearReds();
     // if (state[r][c] === 2) return; // X-marked
     // state[r][c] = state[r][c] === 1 ? 0 : 1;
     state[r][c] = 1;
-    el.classList.toggle('filled');
+    el.classList.add('filled');
     validateCell(r, c, el);
 
 }
 
 function handleRightClick(r, c, el) {
-    clearReds();
     if (el.classList.contains('locked')) return;
-    // if (state[r][c] === 1) return; // filled cannot X
+    clearReds();
+    if (state[r][c] === 2) return; // X-marked cannot X
     // state[r][c] = state[r][c] === 2 ? 0 : 2;
     state[r][c] = 2;
     el.textContent = '✖';
-    el.classList.toggle('marked');
+    el.classList.add('marked');
     validateCell(r, c, el);
 
 
