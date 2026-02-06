@@ -122,6 +122,59 @@ function lockCell(r, c, el) {
     el.classList.add('locked');
 }
 
+function checkFullRow(r) {
+    const row = state[r];
+    console.log("row:", row)
+    const solutionRow = solution[r];
+    console.log("solutionRow:", solutionRow)
+    for (let c = 0; c < row.length; c++) {
+        if (solutionRow[c] == 1 && row[c] !== solutionRow[c]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+function completeRowWithX(r) {
+    const row = state[r];
+    const solutionRow = solution[r];
+    for (let c = 0; c < row.length; c++) {
+        if (row[c] === 0) {
+            let el_cell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+            state[r][c] = 2;
+            el_cell.classList.add('marked');
+            el_cell.textContent = '✖';
+            lockCell(r, c, el_cell);
+        }
+    }
+}
+
+function checkFullCol(c) {
+    const col = state.map(row => row[c]);
+    const solutionCol = solution.map(row => row[c]);
+    for (let r = 0; r < col.length; r++) {
+        if (solutionCol[r] == 1 && col[r] !== solutionCol[r]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function completeColWithX(c) {
+    const col = state.map(row => row[c]);
+    const solutionCol = solution.map(row => row[c]);
+    for (let r = 0; r < col.length; r++) {
+        if (col[r] === 0) {
+            let el_cell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+            state[r][c] = 2;
+            el_cell.classList.add('marked');
+            el_cell.textContent = '✖';
+            lockCell(r, c, el_cell);
+        }
+    }
+}
+
 // ---- Validation ----
 function validateCell(r, c, el) {
     el.classList.remove('wrong');
@@ -130,7 +183,6 @@ function validateCell(r, c, el) {
     const actual = state[r][c];
 
     if (actual === expected) {
-        lockCell(r, c, el);
         return;
     }
 
@@ -149,11 +201,13 @@ function validateCell(r, c, el) {
         el.textContent = '✖';
     }
 
-    lockCell(r, c, el);
     lives--;
     updateLives();
     checkLost();
+
+
 }
+
 
 function clearReds() {
     const wrongCells = document.querySelectorAll('.wrong');
@@ -162,30 +216,46 @@ function clearReds() {
     });
 }
 
-// ---- Click Handlers ----
-function handleClick(r, c, el, e) {
-    if (e && e.button !== 0) return; // only left click
+function applyCellAction(r, c, el, newState, { className, text = '' }) {
     if (el.classList.contains('locked')) return;
+
     clearReds();
-    // if (state[r][c] === 2) return; // X-marked
-    // state[r][c] = state[r][c] === 1 ? 0 : 1;
-    state[r][c] = 1;
-    el.classList.add('filled');
+
+    // prevent re-applying same state (optional safety)
+    if (state[r][c] === newState) return;
+
+    state[r][c] = newState;
+
+    if (text) el.textContent = text;
+    el.classList.add(className);
+
     validateCell(r, c, el);
+
+    lockCell(r, c, el);
+
+    if (checkFullRow(r)) completeRowWithX(r);
+    if (checkFullCol(c)) completeColWithX(c);
 
 }
 
+// ---- Click Handlers ----
+
+function handleClick(r, c, el, e) {
+    if (e && e.button !== 0) return; // left click only
+
+    applyCellAction(r, c, el, 1, {
+        className: 'filled'
+    });
+}
+
 function handleRightClick(r, c, el) {
-    if (el.classList.contains('locked')) return;
-    clearReds();
-    if (state[r][c] === 2) return; // X-marked cannot X
-    // state[r][c] = state[r][c] === 2 ? 0 : 2;
-    state[r][c] = 2;
-    el.textContent = '✖';
-    el.classList.add('marked');
-    validateCell(r, c, el);
+    // X-marked cannot X again (your rule)
+    if (state[r][c] === 2) return;
 
-
+    applyCellAction(r, c, el, 2, {
+        className: 'marked',
+        text: '✖'
+    });
 }
 
 // ---- Win Check ----
