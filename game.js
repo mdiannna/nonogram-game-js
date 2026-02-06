@@ -144,6 +144,7 @@ function completeRowWithX(r) {
             let el_cell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
             state[r][c] = 2;
             el_cell.classList.add('marked');
+            el_cell.style.transition = 'all 0.5s ease';
             el_cell.textContent = '✖';
             lockCell(r, c, el_cell);
         }
@@ -169,6 +170,7 @@ function completeColWithX(c) {
             let el_cell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
             state[r][c] = 2;
             el_cell.classList.add('marked');
+            el_cell.style.transition = 'all 0.5s ease';
             el_cell.textContent = '✖';
             lockCell(r, c, el_cell);
         }
